@@ -1,15 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { ClerkProvider, Show, SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
+import { Inter, IBM_Plex_Mono, Darker_Grotesque } from "next/font/google";
+
+import { dark } from "@clerk/themes";
+import { ThemeProvider } from "@/components/ui/theme-provider";
+
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const plexmono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
   subsets: ["latin"],
+  weight: ["400","500","600","700"]
+  
 });
 
 export const metadata: Metadata = {
@@ -23,12 +30,45 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+    <ClerkProvider
+      appearance={{
+        theme: dark
+      }}
+    >
+      <html lang="en" suppressHydrationWarning>
+          <body
+            className={`${inter.variable} ${plexmono.variable} antialiased`}
+          >
+
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <header>
+                
+              <SignedOut> 
+                {/* //all users that are signed out will see the sign in button */}
+                <SignInButton />
+                
+                <SignUpButton>
+                  <button className="bg-rose-500 text-white p-2 rounded ">
+                    Sign Up
+                  </button>
+                </SignUpButton>
+              </SignedOut>
+              <SignedIn>
+                <UserButton />
+              </SignedIn>
+              </header>
+
+              {children}
+            </ThemeProvider>
+            
+          </body>
+      </html>
+    </ClerkProvider>
+    
   );
 }
