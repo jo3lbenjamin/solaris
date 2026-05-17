@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import { ClerkProvider, Show, SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
 import { Inter, IBM_Plex_Mono, Darker_Grotesque } from "next/font/google";
+
+import { Providers } from "@/components/providers";
+import { ConvexClientProvider } from "@/components/convex-client-provider";
 
 import { dark } from "@clerk/themes";
 import { ThemeProvider } from "@/components/ui/theme-provider";
@@ -15,8 +17,7 @@ const inter = Inter({
 const plexmono = IBM_Plex_Mono({
   variable: "--font-plex-mono",
   subsets: ["latin"],
-  weight: ["400","500","600","700"]
-  
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -30,45 +31,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider
-      appearance={{
-        theme: dark
-      }}
-    >
       <html lang="en" suppressHydrationWarning>
-          <body
-            className={`${inter.variable} ${plexmono.variable} antialiased`}
-          >
-
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <header>
-                
-              <SignedOut> 
-                {/* //all users that are signed out will see the sign in button */}
-                <SignInButton />
-                
-                <SignUpButton>
-                  <button className="bg-rose-500 text-white p-2 rounded ">
-                    Sign Up
-                  </button>
-                </SignUpButton>
-              </SignedOut>
-              <SignedIn>
-                <UserButton />
-              </SignedIn>
-              </header>
-
+        <body className={`${inter.variable} ${plexmono.variable} antialiased`}>
+            <Providers>
               {children}
-            </ThemeProvider>
-            
-          </body>
+            </Providers>
+        </body>
       </html>
-    </ClerkProvider>
-    
   );
 }
